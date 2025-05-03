@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador de Cédula</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .valid {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .invalid {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Validador de Cédula Ecuatoriana</h1>
+        <input type="text" id="cedula" placeholder="Ingrese el número de cédula" maxlength="10">
+        <button onclick="validarCedula()">Validar</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function validarCedula() {
+            const cedula = document.getElementById('cedula').value.trim();
+            const resultado = document.getElementById('result');
+            
+            if (!cedula) {
+                resultado.textContent = "Por favor ingrese un número de cédula";
+                resultado.className = "invalid";
+                return;
+            }
+
+            if (cedula.length !== 10 || isNaN(cedula)) {
+                resultado.textContent = "La cédula debe tener 10 dígitos numéricos";
+                resultado.className = "invalid";
+                return;
+            }
+
+            // Algoritmo de validación para Ecuador
+            const digitoRegion = parseInt(cedula.substring(0, 2));
+            if (digitoRegion < 1 || digitoRegion > 24) {
+                resultado.textContent = "Cédula inválida (código de región no válido)";
+                resultado.className = "invalid";
+                return;
+            }
+
+            const ultimoDigito = parseInt(cedula.substring(9, 10));
+            let suma = 0;
+            for (let i = 0; i < 9; i++) {
+                let digito = parseInt(cedula.charAt(i));
+                if (i % 2 === 0) {
+                    digito *= 2;
+                    if (digito > 9) digito -= 9;
+                }
+                suma += digito;
+            }
+
+            const digitoCalculado = (suma % 10 === 0) ? 0 : 10 - (suma % 10);
+
+            if (digitoCalculado === ultimoDigito) {
+                resultado.textContent = "✅ Cédula válida";
+                resultado.className = "valid";
+            } else {
+                resultado.textContent = "❌ Cédula inválida";
+                resultado.className = "invalid";
+            }
+        }
+    </script>
+</body>
+</html>
